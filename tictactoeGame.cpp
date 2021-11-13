@@ -11,11 +11,21 @@ int n = 10;
 char a, check;
 bool playerCheck = false ;
 
+void playerTurnNoti()
+{
+        if ( player == 'O'){
+        cout << "Player O turn : " << endl;
+    } else
+    if ( player == 'X'){
+        cout << "Player X turn :" << endl;
+    }
+}
+
 void printMatrix()
 {
     for ( int i = 0; i < 3; i++){
         for ( int j = 0; j < 3; j++){
-            cout <<"  "<< matrix[i][j] << "  | ";
+            cout <<"  "<< matrix[i][j] << "  |  ";
         }
             cout <<endl;
     }
@@ -26,56 +36,19 @@ void printMatrix()
     int m;
     cin >> m;
     bool inputSuccess = false;
-    while(!inputSuccess) {
-        if (0 <= m && m <= 9) {
-            //rút gọn dùng modulo - chia lấy dư
-            if ( m <= 3){
-                if (matrix[0][m-1] == 'X' || matrix[0][m-1] == 'O') {
-                    cout << "This field has been used, please try again";
-                    inputSuccess = false;
-                }
-                else {
-                    matrix[0][m-1] = player;
-                    inputSuccess = True;
-                }
-            } else if ( 3 < m <= 6){
-                if (matrix[0][m-1] == 'X' || matrix[0][m-1] == 'O') {
-                    cout << "This field has been used, please try again";
-                    inputSuccess = false;
-                }
-                else {
-                    matrix[0][m-1] = player;
-                    inputSuccess = True;
-                }
-            } else if ( 6 < m <= 9){
-                if (matrix[0][m-1] == 'X' || matrix[0][m-1] == 'O') {
-                    cout << "This field has been used, please try again";
-                    inputSuccess = false;
-                }
-                else {
-                    matrix[0][m-1] = player;
-                    inputSuccess = True;
-                }
-            }
-        }
+    int r = ( m - 1 ) / 3;
+    int c = ( m - 1 ) % 3;
+    if ( matrix[r][c] == 'X' || matrix[r][c] == 'O'){
+        cout << "This field has been used, please try again !";
+    } else {
+        matrix[r][c] = player;
+        inputSuccess = true;
     }
     moves ++;
 }
 
-
-void playerTurn()
-{
-    if ( player == 'O'){
-        cout << "Player X turn : " << endl;
-    } else
-    if ( player == 'X'){
-        cout << "Player O turn :" << endl;
-    }
-}
-
 void playerRotation()
 {
-
     if ( player == 'X' )
     {
         player = 'O';
@@ -98,31 +71,21 @@ void turn()
     }
 }
 
-void winCondition()
+bool winCondition()
 {
-       if (matrix[0][0] == matrix[0][1] && matrix [0][0] == matrix[0][2]){
-        flag = true;
-       }
+    for ( int i = 0 ; i < 3 ; i++){
+        if ( matrix[i][0] == matrix[i][1] && matrix [i][0] == matrix[i][2] ){
+            return flag = true;                                     // kiểm tra xem đã đạt điều kiện thắng chưa ?
+            }
+        if ( matrix[0][i] == matrix[1][i] && matrix[0][i] == matrix[2][i]){
+            return flag = true;
+        }
+    }
        if (matrix[0][0] == matrix[1][1] && matrix [0][0] == matrix[2][2]){
-        flag = true;
-       }
-       if (matrix[0][0] == matrix[1][0] && matrix [0][0] == matrix[2][0]){
-        flag = true;
-       }
-       if (matrix[1][0] == matrix[1][1] && matrix [1][0] == matrix[1][2]){
-        flag = true;
-       }
-       if (matrix[2][0] == matrix[2][1] && matrix [2][0] == matrix[2][2]){
-        flag = true;
+        return flag = true;
        }
        if (matrix[0][2] == matrix[1][1] && matrix [0][2] == matrix[2][0]){
-        flag = true;
-       }
-       if (matrix[0][1] == matrix[1][1] && matrix [0][1] == matrix[2][1]){
-        flag = true;
-       }
-       if (matrix[0][2] == matrix[1][2] && matrix [0][2] == matrix[2][2]){
-        flag = true;
+        return flag = true;
        }
 }
 
@@ -144,24 +107,23 @@ int main()
 {
     turn();
     while ( flag == false ){
-    printMatrix();
-    if ( wrong == false ){
+        playerTurnNoti();
+        printMatrix();
         inputData();
-    }
-    playerTurn();
-    playerRotation();
-    winCondition();
-    steps ++;
+        playerRotation();
+        winCondition();
+        steps ++;
     if ( flag == true)
     {
         winingPlayer();
         printMatrix();
     }
-    if ( moves == 9)
+    if ( moves == 9 && flag == true)
     {
-        cout << "Out of moves";
         break;
-    }
+    } else if ( moves == 9){
+        cout << "Out of moves";
+        }
     }
     return 0;
 }
